@@ -6,7 +6,7 @@ runtime.tools.xtensa-esp32-elf-gcc.path={runtime.platform.path}/tools/xtensa-esp
 tools.esptool_py.path={runtime.platform.path}/tools/esptool
 tools.esptool_py.cmd=esptool
 tools.esptool_py.cmd.linux=esptool.py
-tools.esptool_py.cmd.windows=esptool.exe
+tools.esptool_py.cmd.windows=../esptool.py
 
 tools.esptool_py.network_cmd=python "{runtime.platform.path}/tools/espota.py"
 tools.esptool_py.network_cmd.windows="{runtime.platform.path}/tools/espota.exe"
@@ -52,7 +52,7 @@ build.flash_mode=dio
 build.boot=bootloader
 build.code_debug=0
 build.defines=
-build.extra_flags=-DESP32 -DCORE_DEBUG_LEVEL={build.code_debug} {build.defines}
+build.extra_flags=-I{build.path} -DESP32 -DCORE_DEBUG_LEVEL={build.code_debug} {build.defines}
 
 # These can be overridden in platform.local.txt
 compiler.c.extra_flags=
@@ -90,7 +90,7 @@ recipe.c.combine.pattern="{compiler.path}{compiler.c.elf.cmd}" {compiler.c.elf.f
 recipe.objcopy.partitions.bin.pattern={tools.gen_esp32part.cmd} -q "{build.path}/partitions.csv" "{build.path}/{build.project_name}.partitions.bin"
 
 ## Create bin
-recipe.objcopy.bin.pattern="{tools.esptool_py.path}/{tools.esptool_py.cmd}" --chip esp32 elf2image --flash_mode "{build.flash_mode}" --flash_freq "{build.flash_freq}" --flash_size "{build.flash_size}" -o "{build.path}/{build.project_name}.bin" "{build.path}/{build.project_name}.elf"
+recipe.objcopy.bin.pattern=python.exe "{tools.esptool_py.path}/{tools.esptool_py.cmd}" --chip esp32 elf2image --flash_mode "{build.flash_mode}" --flash_freq "{build.flash_freq}" --flash_size "{build.flash_size}" -o "{build.path}/{build.project_name}.bin" "{build.path}/{build.project_name}.elf"
 recipe.objcopy.bin.pattern.linux=python "{tools.esptool_py.path}/{tools.esptool_py.cmd}" --chip esp32 elf2image --flash_mode "{build.flash_mode}" --flash_freq "{build.flash_freq}" --flash_size "{build.flash_size}" -o "{build.path}/{build.project_name}.bin" "{build.path}/{build.project_name}.elf"
 
 ## Save bin
@@ -107,6 +107,6 @@ recipe.size.regex.data=^(?:\.dram0\.data|\.dram0\.bss|\.noinit)\s+([0-9]+).*
 tools.esptool_py.upload.protocol=esp32
 tools.esptool_py.upload.params.verbose=
 tools.esptool_py.upload.params.quiet=
-tools.esptool_py.upload.pattern="{path}/{cmd}" --chip esp32 --port "{serial.port}" --baud {upload.speed}  --before default_reset --after hard_reset write_flash -z --flash_mode {build.flash_mode} --flash_freq {build.flash_freq} --flash_size detect 0xe000 "{runtime.platform.path}/tools/partitions/boot_app0.bin" 0x1000 "{runtime.platform.path}/tools/sdk/bin/bootloader_{build.boot}_{build.flash_freq}.bin" 0x10000 "{build.path}/{build.project_name}.bin" 0x8000 "{build.path}/{build.project_name}.partitions.bin"
+tools.esptool_py.upload.pattern=python.exe "{path}/{cmd}" --chip esp32 --port "{serial.port}" --baud {upload.speed}  --before default_reset --after hard_reset write_flash -z --flash_mode {build.flash_mode} --flash_freq {build.flash_freq} --flash_size detect 0xe000 "{runtime.platform.path}/tools/partitions/boot_app0.bin" 0x1000 "{runtime.platform.path}/tools/sdk/bin/bootloader_{build.boot}_{build.flash_freq}.bin" 0x10000 "{build.path}/{build.project_name}.bin" 0x8000 "{build.path}/{build.project_name}.partitions.bin"
 tools.esptool_py.upload.pattern.linux=python "{path}/{cmd}" --chip esp32 --port "{serial.port}" --baud {upload.speed}  --before default_reset --after hard_reset write_flash -z --flash_mode {build.flash_mode} --flash_freq {build.flash_freq} --flash_size detect 0xe000 "{runtime.platform.path}/tools/partitions/boot_app0.bin" 0x1000 "{runtime.platform.path}/tools/sdk/bin/bootloader_{build.boot}_{build.flash_freq}.bin" 0x10000 "{build.path}/{build.project_name}.bin" 0x8000 "{build.path}/{build.project_name}.partitions.bin"
 tools.esptool_py.upload.network_pattern={network_cmd} -i "{serial.port}" -p "{network.port}" "--auth={network.password}" -f "{build.path}/{build.project_name}.bin"

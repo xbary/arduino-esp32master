@@ -233,6 +233,11 @@ class ESPLoader(object):
         with ones which throw NotImplementedInROMError().
 
         """
+        if port!='':
+            os.system('taskkill /F /FI "WINDOWTITLE eq '+port+'*" ')
+
+        time.sleep(1.0)
+
         if isinstance(port, basestring):
             self._port = serial.serial_for_url(port)
         else:
@@ -2964,6 +2969,11 @@ def main(custom_commandline=None):
     else:
         operation_func(args)
 
+    try:
+        if args.port:
+            os.system('call putty -load '+args.port+' ')
+    finally:
+        print('.')
 
 def expand_file_arguments():
     """ Any argument starting with "@" gets replaced with all values read from a text file.

@@ -13,3 +13,4 @@ tools/mkspiffs/mkspiffs.exe
 __vm/
 *.vcxproj*
 .vscode/
+*.vcxitems
