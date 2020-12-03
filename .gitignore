@@ -14,3 +14,4 @@ __vm/
 *.vcxproj*
 .vscode/
 *.vcxitems
+/out/build/x64-Debug (domyślnie)
